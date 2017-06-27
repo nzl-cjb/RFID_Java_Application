@@ -17,8 +17,9 @@ public class DBConnection {
     private Connection connection;
     
     /**
-     * Default constructor for DBConnection class.
-     * The constructor initializes the connection variable for the class
+     * This default constructor creates a connection to the database where the school stores their data for this particular
+     * system. The connection variable is initialized in this constructor and acts as the bridge between the application
+     * and the database.
      */
     public DBConnection() {
         try {
