@@ -18,7 +18,7 @@ public class MainGUI {
      * Creates new form MainGUI
      */
     public MainGUI() {
-        HomeForm form = new HomeForm(frame);
+        LoginForm form = new LoginForm(frame);
         frame.add(form);
         frame.pack();
         frame.setVisible(true);

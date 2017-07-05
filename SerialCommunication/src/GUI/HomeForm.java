@@ -28,7 +28,8 @@ public class HomeForm extends javax.swing.JPanel {
 
     /**
      * Creates a new home form
-     * @param frame 
+     *
+     * @param frame
      */
     public HomeForm(JFrame frame) {
         this.frame = frame;
@@ -40,8 +41,10 @@ public class HomeForm extends javax.swing.JPanel {
     }
 
     /**
-     * This method establishes a connection with the system database and retrieves 
-     * @return 
+     * This method establishes a connection with the system database and
+     * retrieves
+     *
+     * @return
      */
     public String[] getStudents() {
         try {
@@ -89,6 +92,7 @@ public class HomeForm extends javax.swing.JPanel {
         btnAddTeacher = new javax.swing.JButton();
         btnAddCourse = new javax.swing.JButton();
         btnEnrollStudent = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
 
         btnAddStudent.setText("Add Student");
         btnAddStudent.addActionListener(new java.awt.event.ActionListener() {
@@ -180,6 +184,13 @@ public class HomeForm extends javax.swing.JPanel {
             }
         });
 
+        btnLogout.setText("Logout");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelTeachersLayout = new javax.swing.GroupLayout(panelTeachers);
         panelTeachers.setLayout(panelTeachersLayout);
         panelTeachersLayout.setHorizontalGroup(
@@ -189,8 +200,10 @@ public class HomeForm extends javax.swing.JPanel {
                 .addComponent(btnAddTeacher)
                 .addGap(50, 50, 50)
                 .addGroup(panelTeachersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnEnrollStudent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAddCourse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelTeachersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btnEnrollStudent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAddCourse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(86, Short.MAX_VALUE))
         );
         panelTeachersLayout.setVerticalGroup(
@@ -202,7 +215,9 @@ public class HomeForm extends javax.swing.JPanel {
                     .addComponent(btnAddCourse))
                 .addGap(20, 20, 20)
                 .addComponent(btnEnrollStudent)
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
+                .addComponent(btnLogout)
+                .addContainerGap())
         );
 
         tabMain.addTab("Teachers", panelTeachers);
@@ -267,6 +282,16 @@ public class HomeForm extends javax.swing.JPanel {
         frame.pack();
     }//GEN-LAST:event_btnEnrollStudentActionPerformed
 
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        JOptionPane.showMessageDialog(this,
+                "Thank you for using the RFID System",
+                "RFID System",
+                JOptionPane.PLAIN_MESSAGE);
+        frame.remove(this);
+        frame.add(new LoginForm(frame));
+        frame.pack();
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddCourse;
@@ -275,6 +300,7 @@ public class HomeForm extends javax.swing.JPanel {
     private javax.swing.JButton btnAddTeacher;
     private javax.swing.JButton btnEditStudent;
     private javax.swing.JButton btnEnrollStudent;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JComboBox<String> comboStudents;
     private javax.swing.JPanel panelParents;
     private javax.swing.JPanel panelStudents;
