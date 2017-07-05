@@ -39,6 +39,10 @@ public class HomeForm extends javax.swing.JPanel {
         comboStudents.setSelectedItem(null);
     }
 
+    /**
+     * This method establishes a connection with the system database and retrieves 
+     * @return 
+     */
     public String[] getStudents() {
         try {
             ArrayList<String> studentList = new ArrayList<String>();
