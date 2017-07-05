@@ -89,7 +89,7 @@ public class ParentForm extends javax.swing.JPanel {
         } catch (SQLException ex) {
             Logger.getLogger(StudentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         txtUsername.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
@@ -120,7 +120,7 @@ public class ParentForm extends javax.swing.JPanel {
                 }
             }
         });
-        
+
         txtPhoneNumber.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
@@ -133,7 +133,7 @@ public class ParentForm extends javax.swing.JPanel {
                 }
             }
         });
-        
+
         txtEmail.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
@@ -294,40 +294,57 @@ public class ParentForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * This method 
-     * @param evt 
+     * This method is called when the submit button is pressed. It then calls
+     * the addParent method and takes the fields from the form as parameters
+     *
+     * @param evt the submit button is pressed
      */
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+        String phoneNumber = txtPhoneNumber.getText();
+        String email = txtEmail.getText();
+        boolean passwordMatch = (txtPassword.getText().equals(txtConfirmPassword.getText()));
+        if (passwordMatch) {
+            addParent(username, password, phoneNumber, email);
+        }
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
+    /**
+     * This method attempts to add a parent into the database
+     * 
+     * @param username the username of the parent
+     * @param password the password of the parent
+     * @param phoneNumber the phoneNumber of the parent
+     * @param email the email address of the parent
+     * @return whether the parent was successfully added to the database or not
+     */
+    public boolean addParent(String username, String password, String phoneNumber, String email) {
         try {
-            String username = txtUsername.getText();
-            String password = txtPassword.getText();
-            String phoneNumber = txtPhoneNumber.getText();
-            String email = txtEmail.getText();
-            
             statement = connection.createStatement();
             ResultSet usernameParentSet = statement.executeQuery("SELECT count(*) AS count FROM parent WHERE username = '" + username + "'");
             int usernameParentCount = 0;
             try {
                 usernameParentSet.next();
-                usernameParentCount= usernameParentSet.getInt("count");
+                usernameParentCount = usernameParentSet.getInt("count");
             } catch (Exception e) {
             }
-            
+
             ResultSet usernameTeacherSet = statement.executeQuery("SELECT count(*) AS count FROM teacher WHERE username = '" + username + "'");
             int usernameTeacherCount = 0;
             try {
                 usernameParentSet.next();
                 usernameTeacherCount = usernameTeacherSet.getInt("count");
-            } catch (Exception e) {  
+            } catch (Exception e) {
             }
             ResultSet emailParentSet = statement.executeQuery("SELECT count(*) AS count FROM parent WHERE email = '" + email + "'");
             int emailParentCount = 0;
             try {
                 emailParentSet.next();
-                emailParentCount= usernameParentSet.getInt("count");
+                emailParentCount = usernameParentSet.getInt("count");
             } catch (Exception e) {
             }
-            
+
             ResultSet emailTeacherSet = statement.executeQuery("SELECT count(*) AS count FROM teacher WHERE email = '" + email + "'");
             int emailTeacherCount = 0;
             try {
@@ -335,11 +352,8 @@ public class ParentForm extends javax.swing.JPanel {
                 emailTeacherCount = usernameTeacherSet.getInt("count");
             } catch (Exception e) {
             }
-            
-            
-            boolean passwordMatch = (txtPassword.getText().equals(txtConfirmPassword.getText()));
-            
-            if (usernameParentCount == 0 && usernameTeacherCount == 0 && emailParentCount == 0 && emailTeacherCount == 0 && passwordMatch) {
+
+            if (usernameParentCount == 0 && usernameTeacherCount == 0 && emailParentCount == 0 && emailTeacherCount == 0) {
                 statement.execute("INSERT INTO parent (parentID, username, password, phoneNumber, email) "
                         + "VALUES (NULL, '" + username + "', '" + password + "', '" + phoneNumber + "', '" + email + "')");
                 JOptionPane.showMessageDialog(this,
@@ -347,13 +361,17 @@ public class ParentForm extends javax.swing.JPanel {
                         "RFID System",
                         JOptionPane.PLAIN_MESSAGE);
                 clearForm();
+                return true;
             }
-            
         } catch (SQLException ex) {
-            Logger.getLogger(ParentForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnSubmitActionPerformed
+        return false;
+    }
 
+    /**
+     * This method return the user to the home screen of the application.
+     * @param evt the home button was pressed
+     */
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         frame.remove(this);
         frame.add(new HomeForm(frame));

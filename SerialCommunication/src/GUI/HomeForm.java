@@ -5,7 +5,6 @@
  */
 package GUI;
 
-import GUI.CourseForm;
 import ClassModel.DBConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -28,7 +27,8 @@ public class HomeForm extends javax.swing.JPanel {
     private Statement statement;
 
     /**
-     * Creates new form Home
+     * Creates a new home form
+     * @param frame 
      */
     public HomeForm(JFrame frame) {
         this.frame = frame;

@@ -108,6 +108,10 @@ public class SerialCommunication {
         }
     }
 
+    /**
+     * Runs 
+     * @param args 
+     */
     public static void main(String args[]) {
 
         SerialCommunication comm = new SerialCommunication();
