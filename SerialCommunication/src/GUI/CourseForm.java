@@ -6,32 +6,20 @@
 package GUI;
 
 import ClassModel.DBConnection;
-import com.fazecast.jSerialComm.SerialPort;
-import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -42,14 +30,25 @@ public class CourseForm extends javax.swing.JPanel {
     private Connection connection;
     private Statement statement;
     private JFrame frame;
+    private int maxClassCode;
 
     /**
-     * Creates new form NewStudentForm
+     * The constructor will be called when a staff member creates a new course
+     * within the school
+     *
+     * @param frame the frame storing the panel
      */
     public CourseForm(JFrame frame) {
         initialiseConstructor(frame);
     }
 
+    /**
+     * This method was created to reduce duplicate code for two potentially
+     * different constructors (One for a create course and the other for edit
+     * course)
+     *
+     * @param frame the frame storing the panel
+     */
     public void initialiseConstructor(JFrame frame) {
         this.frame = frame;
         DBConnection dbConnection = new DBConnection();
@@ -58,12 +57,35 @@ public class CourseForm extends javax.swing.JPanel {
         comboTeacher.setModel(new javax.swing.DefaultComboBoxModel<>(getTeachers()));
         comboTeacher.setSelectedItem(null);
 
+        /*
+        Gets the column size for specified columns. The reason for this is so that any updates made in the
+        database will not have to be manually updated. As part of minimising user error, they are limited to 
+        entering strings with length equal to one less than the column size.
+         */
+        try {
+            DatabaseMetaData meta = connection.getMetaData();
+            ResultSet columns = meta.getColumns(null, null, "student", null);
+
+            while (columns.next()) {
+                String columnName = columns.getString("COLUMN_NAME");
+                if (columnName.equals("classCode")) {
+                    maxClassCode = columns.getInt("COLUMN_SIZE") - 1;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        /*
+        Helps minimise user input error by controlling the characters they can enter, as well as the length 
+        of the string.
+         */
         txtClassCode.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
                 Pattern pattern = Pattern.compile("[a-zA-Z0-9]");
                 Matcher matcher = pattern.matcher(key);
-                if (txtClassCode.getText().length() >= 9) {
+                if (txtClassCode.getText().length() >= maxClassCode) {
                     e.consume();
                 } else if (!matcher.find()) {
                     e.consume();
@@ -72,11 +94,19 @@ public class CourseForm extends javax.swing.JPanel {
         });
     }
 
+    /**
+     * Clears all fields in the course form
+     */
     public void clearForm() {
         txtClassCode.setText(null);
         comboTeacher.setSelectedItem(null);
     }
 
+    /**
+     * This method is used for populating the teacher combo box.
+     *
+     * @return a string array of all teachers in the database
+     */
     public String[] getTeachers() {
         try {
             ArrayList<String> teacherList = new ArrayList<String>();
@@ -92,8 +122,8 @@ public class CourseForm extends javax.swing.JPanel {
             while (teacherSet.next()) {
                 int teacherID = teacherSet.getInt("teacherID");
                 String username = teacherSet.getString("username");
-                
-                teacherArray[i] = "" + teacherID + ")" + username; 
+
+                teacherArray[i] = "" + teacherID + ")" + username;
                 i++;
             }
             return teacherArray;
@@ -102,7 +132,7 @@ public class CourseForm extends javax.swing.JPanel {
         }
         return null;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -198,20 +228,36 @@ public class CourseForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This method calls either the addCourse method
+     *
+     * @param evt the "Submit" button has been clicked
+     */
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        String classCode = txtClassCode.getText();
+        Object comboRetrieve = comboTeacher.getSelectedItem();
+        String comboString = comboRetrieve.toString();
+        String[] comboSplit = comboString.split("\\)");
+        int teacherID = Integer.parseInt(comboSplit[0]);
+        addCourse(classCode, teacherID);
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
+    /**
+     * This method attempts to add anew course to the database
+     *
+     * @param classCode the classCode of the proposed course
+     * @param teacherID the teacherID of the teacher who will be teaching the
+     * course
+     * @return whether the addition of the course to the database was successful
+     * or not
+     */
+    public boolean addCourse(String classCode, int teacherID) {
         try {
             statement = connection.createStatement();
-            ResultSet classCodeSet = statement.executeQuery("SELECT count(*) AS count FROM class WHERE classCode = '" + txtClassCode.getText() + "'");
+            ResultSet classCodeSet = statement.executeQuery("SELECT count(*) AS count FROM class WHERE classCode = '" + classCode + "'");
             classCodeSet.next();
             int classCodeCount = classCodeSet.getInt("count");
 
-            String classCode = txtClassCode.getText();
-            
-            Object comboRetrieve = comboTeacher.getSelectedItem();
-            String comboString = comboRetrieve.toString();
-            String[] comboSplit = comboString.split("\\)");
-            int teacherID = Integer.parseInt(comboSplit[0]);
-            
             if (classCodeCount == 0) {
                 statement.execute("INSERT INTO class (classID, classCode, teacherID) "
                         + "VALUES (NULL, '" + classCode + "', " + teacherID + ")");
@@ -221,12 +267,20 @@ public class CourseForm extends javax.swing.JPanel {
                         "RFID System",
                         JOptionPane.PLAIN_MESSAGE);
                 clearForm();
+                return true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(CourseForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnSubmitActionPerformed
+        return false;
+    }
 
+    /**
+     * This method removes the course panel from the frame and replaces the
+     * panel with the home panel.
+     *
+     * @param evt the home button was pressed
+     */
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         frame.remove(this);
         frame.add(new HomeForm(frame));

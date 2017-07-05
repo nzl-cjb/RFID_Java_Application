@@ -4,19 +4,40 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+/**
+ * 
+ * @author Callum
+ */
 public class Mail {
 
     private String userName = "rfidprojectaut";  // GMail user name (just the part before "@gmail.com")
     private String password = "rfidArduino"; // GMail password
     
+    /**
+     * This constructor is called when a trigger event has happened in the application, prompting an email
+     * to be sent to either a parent, teacher or both.
+     * 
+     * @param recipient the recipient of the email
+     * @param subject the subject of the email
+     * @param body the main text of the email
+     */
     public Mail(String recipient, String subject, String body) {
         String from = userName;
         String pass = password;
-        String[] to = { recipient }; // list of recipient email addresses
+        String[] to = {recipient};
 
         sendFromGMail(from, pass, to, subject, body);
     }
 
+    /**
+     * Sends an email from the sender to the recipient(s) with the specified subject and body.
+     * 
+     * @param from the account sending the email
+     * @param pass the password of the account sending the email
+     * @param to the proposed recipients of the email
+     * @param subject the subject of the email
+     * @param body the main text within the email
+     */
     public void sendFromGMail(String from, String pass, String[] to, String subject, String body) {
         Properties props = System.getProperties();
         String host = "smtp.gmail.com";
@@ -49,7 +70,6 @@ public class Mail {
             transport.connect(host, from, pass);
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
-            System.out.println("Email sent!");
         }
         catch (AddressException ae) {
             ae.printStackTrace();

@@ -5,34 +5,19 @@
  */
 package GUI;
 
-import GUI.HomeForm;
 import ClassModel.DBConnection;
-import com.fazecast.jSerialComm.SerialPort;
-import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -75,7 +60,6 @@ public class TeacherForm extends javax.swing.JPanel {
         });
 
         txtPassword.addKeyListener(new KeyAdapter() {
-
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
                 if (txtPassword.getText().length() >= 19) {
@@ -85,7 +69,6 @@ public class TeacherForm extends javax.swing.JPanel {
         });
 
         txtConfirmPassword.addKeyListener(new KeyAdapter() {
-
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
                 if (txtConfirmPassword.getText().length() >= 19) {
@@ -93,9 +76,8 @@ public class TeacherForm extends javax.swing.JPanel {
                 }
             }
         });
-        
-        txtEmail.addKeyListener(new KeyAdapter() {
 
+        txtEmail.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
                 if (txtConfirmPassword.getText().length() >= 39) {
@@ -105,6 +87,9 @@ public class TeacherForm extends javax.swing.JPanel {
         });
     }
 
+    /**
+     * This method clears all fields in the form
+     */
     public void clearForm() {
         txtUsername.setText(null);
         txtPassword.setText(null);
@@ -163,19 +148,9 @@ public class TeacherForm extends javax.swing.JPanel {
 
         txtConfirmPassword.setBackground(new java.awt.Color(255, 255, 255));
         txtConfirmPassword.setPreferredSize(new java.awt.Dimension(4, 20));
-        txtConfirmPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtConfirmPasswordActionPerformed(evt);
-            }
-        });
 
         txtPassword.setBackground(new java.awt.Color(255, 255, 255));
         txtPassword.setPreferredSize(new java.awt.Dimension(4, 20));
-        txtPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPasswordActionPerformed(evt);
-            }
-        });
 
         txtUsername.setBackground(new java.awt.Color(255, 255, 255));
         txtUsername.setPreferredSize(new java.awt.Dimension(4, 20));
@@ -189,11 +164,6 @@ public class TeacherForm extends javax.swing.JPanel {
 
         txtEmail.setBackground(new java.awt.Color(255, 255, 255));
         txtEmail.setPreferredSize(new java.awt.Dimension(4, 20));
-        txtEmail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEmailActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -251,46 +221,46 @@ public class TeacherForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtConfirmPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtConfirmPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtConfirmPasswordActionPerformed
-
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPasswordActionPerformed
-
+    /**
+     *
+     * @param evt
+     */
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+        String email = txtEmail.getText();
+        boolean passwordMatch = (txtPassword.getText().equals(txtConfirmPassword.getText()));
+        if (passwordMatch) {
+            addTeacher(username, password, email);
+        }
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
+    public boolean addTeacher(String username, String password, String email) {
         try {
-            
-            String username = txtUsername.getText();
-            String password = txtPassword.getText();
-            String email = txtEmail.getText();
-            
             statement = connection.createStatement();
             ResultSet usernameParentSet = statement.executeQuery("SELECT count(*) AS count FROM parent WHERE username = '" + username + "'");
             int usernameParentCount = 0;
             try {
                 usernameParentSet.next();
-                usernameParentCount= usernameParentSet.getInt("count");
+                usernameParentCount = usernameParentSet.getInt("count");
             } catch (Exception e) {
             }
-            
 
             ResultSet usernameTeacherSet = statement.executeQuery("SELECT count(*) AS count FROM teacher WHERE username = '" + username + "'");
             int usernameTeacherCount = 0;
             try {
                 usernameParentSet.next();
                 usernameTeacherCount = usernameTeacherSet.getInt("count");
-            } catch (Exception e) {  
+            } catch (Exception e) {
             }
             ResultSet emailParentSet = statement.executeQuery("SELECT count(*) AS count FROM parent WHERE email = '" + email + "'");
             int emailParentCount = 0;
             try {
                 emailParentSet.next();
-                emailParentCount= usernameParentSet.getInt("count");
+                emailParentCount = usernameParentSet.getInt("count");
             } catch (Exception e) {
             }
-            
+
             ResultSet emailTeacherSet = statement.executeQuery("SELECT count(*) AS count FROM teacher WHERE email = '" + email + "'");
             int emailTeacherCount = 0;
             try {
@@ -298,11 +268,8 @@ public class TeacherForm extends javax.swing.JPanel {
                 emailTeacherCount = usernameTeacherSet.getInt("count");
             } catch (Exception e) {
             }
-            
-            
-            boolean passwordMatch = (txtPassword.getText().equals(txtConfirmPassword.getText()));
-            
-            if (usernameParentCount == 0 && usernameTeacherCount == 0 && emailParentCount == 0 && emailTeacherCount == 0 && passwordMatch) {
+
+            if (usernameParentCount == 0 && usernameTeacherCount == 0 && emailParentCount == 0 && emailTeacherCount == 0) {
                 statement.execute("INSERT INTO teacher (teacherID, username, password, email) "
                         + "VALUES (NULL, '" + username + "', '" + password + "', '" + email + "')");
                 JOptionPane.showMessageDialog(this,
@@ -310,23 +277,25 @@ public class TeacherForm extends javax.swing.JPanel {
                         "RFID System",
                         JOptionPane.PLAIN_MESSAGE);
                 clearForm();
+                return true;
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(TeacherForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_btnSubmitActionPerformed
+        return false;
+    }
 
+    /**
+     * This method returns the user to the home screen of the application
+     *
+     * @param evt the home button was pressed
+     */
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         frame.remove(this);
         frame.add(new HomeForm(frame));
         frame.pack();
     }//GEN-LAST:event_btnHomeActionPerformed
-
-    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEmailActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHome;

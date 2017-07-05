@@ -6,32 +6,19 @@
 package GUI;
 
 import ClassModel.DBConnection;
-import com.fazecast.jSerialComm.SerialPort;
-import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -45,11 +32,19 @@ public class EnrollForm extends javax.swing.JPanel {
 
     /**
      * Creates new form NewStudentForm
+     *
+     * @param frame the frame storing the panel
      */
     public EnrollForm(JFrame frame) {
         initialiseConstructor(frame);
     }
 
+    /**
+     * This method was created to reduce duplicate code for the two different
+     * constructors. Initial values for the class are set within this method.
+     *
+     * @param frame the frame storing the panel
+     */
     public void initialiseConstructor(JFrame frame) {
         this.frame = frame;
         DBConnection dbConnection = new DBConnection();
@@ -57,7 +52,7 @@ public class EnrollForm extends javax.swing.JPanel {
         initComponents();
         comboStudent.setModel(new javax.swing.DefaultComboBoxModel<>(getStudents()));
         comboStudent.setSelectedItem(null);
-        
+
         txtGrade.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
@@ -70,10 +65,10 @@ public class EnrollForm extends javax.swing.JPanel {
                 }
             }
         });
-        
+
         comboClass.setModel(new javax.swing.DefaultComboBoxModel<>(getClasses()));
         comboClass.setSelectedItem(null);
-        
+
         txtGrade.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 String key = String.valueOf(e.getKeyChar());
@@ -88,12 +83,20 @@ public class EnrollForm extends javax.swing.JPanel {
         });
     }
 
+    /**
+     * Clears all fields in the course form
+     */
     public void clearForm() {
         comboClass.setSelectedItem(null);
         comboStudent.setSelectedItem(null);
         txtGrade.setText(null);
     }
 
+    /**
+     * This method is used for populating the student combo box.
+     *
+     * @return a string array of all parents in the database
+     */
     public String[] getStudents() {
         try {
             ArrayList<String> studentList = new ArrayList<String>();
@@ -111,8 +114,8 @@ public class EnrollForm extends javax.swing.JPanel {
                 String firstName = studentSet.getString("firstName");
                 String lastName = studentSet.getString("lastName");
                 String fullName = firstName + " " + lastName;
-                
-                studentArray[i] = "" + studentID + ")" + fullName; 
+
+                studentArray[i] = "" + studentID + ")" + fullName;
                 i++;
             }
             return studentArray;
@@ -121,7 +124,11 @@ public class EnrollForm extends javax.swing.JPanel {
         }
         return null;
     }
-    
+
+    /**
+     *
+     * @return an array of all classes stored in the system database
+     */
     public String[] getClasses() {
         try {
             ArrayList<String> classList = new ArrayList<String>();
@@ -137,8 +144,8 @@ public class EnrollForm extends javax.swing.JPanel {
             while (classSet.next()) {
                 int classID = classSet.getInt("classID");
                 String classCode = classSet.getString("classCode");
-                
-                classArray[i] = "" + classID + ")" + classCode; 
+
+                classArray[i] = "" + classID + ")" + classCode;
                 i++;
             }
             return classArray;
@@ -147,7 +154,7 @@ public class EnrollForm extends javax.swing.JPanel {
         }
         return null;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -257,42 +264,43 @@ public class EnrollForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+    public boolean addEnrollment(int studentID, int classID, String grade) {
         try {
-            Object comboRetrieveStudent = comboStudent.getSelectedItem();
-            String comboStringStudent = comboRetrieveStudent.toString();
-            String[] comboSplitStudent = comboStringStudent.split("\\)");
-            int studentID = Integer.parseInt(comboSplitStudent[0]);
-            
-            Object comboRetrieveClass = comboClass.getSelectedItem();
-            String comboStringClass = comboRetrieveClass.toString();
-            String[] comboSplitClass = comboStringClass.split("\\)");
-            int classID = Integer.parseInt(comboSplitClass[0]);
-            
-            System.out.println(classID);
-            System.out.println(studentID);
-            
             statement = connection.createStatement();
             ResultSet enrollSet = statement.executeQuery("SELECT count(*) AS count FROM enroll WHERE classID = " + classID + " AND studentID = " + studentID);
             enrollSet.next();
             int enrollCount = enrollSet.getInt("count");
 
-            String grade = txtGrade.getText();
-            
             if (enrollCount == 0) {
                 statement.execute("SET FOREIGN_KEY_CHECKS = 0");
                 statement.execute("INSERT INTO enroll (studentID, classID, grade) "
-                        + "VALUES (" + studentID + ", " + classID + ", '" + grade + "')"); 
+                        + "VALUES (" + studentID + ", " + classID + ", '" + grade + "')");
                 statement.execute("SET FOREIGN_KEY_CHECKS = 1");
                 JOptionPane.showMessageDialog(this,
                         "Student enrolled successfully added",
                         "RFID System",
                         JOptionPane.PLAIN_MESSAGE);
                 clearForm();
+                return true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(EnrollForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
+    }
+
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        Object comboRetrieveStudent = comboStudent.getSelectedItem();
+        String comboStringStudent = comboRetrieveStudent.toString();
+        String[] comboSplitStudent = comboStringStudent.split("\\)");
+        int studentID = Integer.parseInt(comboSplitStudent[0]);
+
+        Object comboRetrieveClass = comboClass.getSelectedItem();
+        String comboStringClass = comboRetrieveClass.toString();
+        String[] comboSplitClass = comboStringClass.split("\\)");
+        int classID = Integer.parseInt(comboSplitClass[0]);
+        String grade = txtGrade.getText();
+        addEnrollment(studentID, classID, grade);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed

@@ -39,8 +39,8 @@ public class StudentForm extends javax.swing.JPanel {
     private int maxLastName;
 
     /**
-     * The default constructor will be called when a staff member enrolls a new
-     * student in the school
+     * The constructor will be called when a staff member enrolls a new student
+     * in the school
      *
      * @param frame the frame storing the panel
      */
@@ -292,9 +292,6 @@ public class StudentForm extends javax.swing.JPanel {
         }
         chosenPort.closePort();
         lblRFID.setText("RFID: ");
-//        if (txtRFIDKey.getText().equals(before)) {
-//            txtRFIDKey.setText(null);
-//        }
     }
 
     /**
@@ -509,15 +506,23 @@ public class StudentForm extends javax.swing.JPanel {
 
             addStudent(firstName, lastName, studentNumber, parent, rfidKey);
         } else {
-            editStudent();
+            String originalValue =  editRFID;
+            String updatedValue = txtRFIDKey.getText();
+            editStudent(originalValue, updatedValue);
         }
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     /**
-     * This method attempts to add a new student to the database.
+     * This method attempts to add a new student to the database
+     * 
+     * @param firstName the firstName of the student
+     * @param lastName the lastName of the student
+     * @param studentNumber the studentNumber of the student
+     * @param parent the name of the student's parent
+     * @param rfidKey the RFID key of the student
+     * @return whether the addition of the student to the database was successful or not
      */
-    private void addStudent(String firstName, String lastName, String studentNumber, String parent, String rfidKey) {
-        System.out.println("Called");
+    private boolean addStudent(String firstName, String lastName, String studentNumber, String parent, String rfidKey) {
         try {
             /**
              * This block of code checks to see if the studentID is unique. This
@@ -576,6 +581,7 @@ public class StudentForm extends javax.swing.JPanel {
                         "RFID System",
                         JOptionPane.PLAIN_MESSAGE);
                 clearForm();
+                return true;
             } else {
                 if (tagCount != 0) {
                     lblRFID.setText("<html>RFID: <font color='red'>(In Use)</font></html>");
@@ -606,14 +612,17 @@ public class StudentForm extends javax.swing.JPanel {
                 lblRFID.paintImmediately(lblRFID.getVisibleRect());
             }
         }
+        return false;
     }
 
     /**
      * This method brings up the information related to an existing student in
      * the database, with the intention of updating the RFID key associated with
      * them.
+     * @param originalValue the original value of the students RFID tag
+     * @param updatedValue the value that the students new RFID tag will be
      */
-    public void editStudent() {
+    public void editStudent(String originalValue, String updatedValue) {
         if (editRFID.equals(txtRFIDKey.getText())) {
             JOptionPane.showMessageDialog(this,
                     "RFID key has not been changed",
@@ -627,7 +636,7 @@ public class StudentForm extends javax.swing.JPanel {
                 int rfidCount = rfidNumberSet.getInt("count");
 
                 if (rfidCount == 0) {
-                    statement.executeUpdate("UPDATE rfidTags set rfidKey = '" + txtRFIDKey.getText() + "' where rfidKey = '" + editRFID + "'");
+                    statement.executeUpdate("UPDATE rfidTags set rfidKey = '" + updatedValue + "' where rfidKey = '" + originalValue + "'");
                     JOptionPane.showMessageDialog(this,
                             "Successfully updated RFID",
                             "RFID System",
@@ -667,7 +676,7 @@ public class StudentForm extends javax.swing.JPanel {
      * This method removes the student panel from the frame and replaces the
      * panel with the home panel.
      *
-     * @param evt
+     * @param evt the home button was pressed
      */
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         frame.remove(this);
