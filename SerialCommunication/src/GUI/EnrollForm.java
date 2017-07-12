@@ -53,34 +53,8 @@ public class EnrollForm extends javax.swing.JPanel {
         comboStudent.setModel(new javax.swing.DefaultComboBoxModel<>(getStudents()));
         comboStudent.setSelectedItem(null);
 
-        txtGrade.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                String key = String.valueOf(e.getKeyChar());
-                Pattern pattern = Pattern.compile("[A-Z+-]");
-                Matcher matcher = pattern.matcher(key);
-                if (txtGrade.getText().length() >= 4) {
-                    e.consume();
-                } else if (!matcher.find()) {
-                    e.consume();
-                }
-            }
-        });
-
         comboClass.setModel(new javax.swing.DefaultComboBoxModel<>(getClasses()));
         comboClass.setSelectedItem(null);
-
-        txtGrade.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
-                String key = String.valueOf(e.getKeyChar());
-                Pattern pattern = Pattern.compile("[A-Z+-]");
-                Matcher matcher = pattern.matcher(key);
-                if (txtGrade.getText().length() >= 4) {
-                    e.consume();
-                } else if (!matcher.find()) {
-                    e.consume();
-                }
-            }
-        });
     }
 
     /**
@@ -89,7 +63,6 @@ public class EnrollForm extends javax.swing.JPanel {
     public void clearForm() {
         comboClass.setSelectedItem(null);
         comboStudent.setSelectedItem(null);
-        txtGrade.setText(null);
     }
 
     /**
@@ -171,8 +144,6 @@ public class EnrollForm extends javax.swing.JPanel {
         btnSubmit = new javax.swing.JButton();
         btnHome = new javax.swing.JButton();
         comboClass = new javax.swing.JComboBox<>();
-        lblGrade = new javax.swing.JLabel();
-        txtGrade = new javax.swing.JFormattedTextField();
 
         setBackground(new java.awt.Color(0, 204, 204));
 
@@ -208,12 +179,6 @@ public class EnrollForm extends javax.swing.JPanel {
         comboClass.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         comboClass.setPreferredSize(new java.awt.Dimension(56, 20));
 
-        lblGrade.setText("Grade:");
-        lblGrade.setPreferredSize(new java.awt.Dimension(90, 20));
-
-        txtGrade.setBackground(new java.awt.Color(255, 255, 255));
-        txtGrade.setPreferredSize(new java.awt.Dimension(4, 20));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -226,8 +191,7 @@ public class EnrollForm extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblClassCode, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                    .addComponent(lblTeacher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblGrade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblTeacher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
@@ -235,8 +199,7 @@ public class EnrollForm extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                         .addComponent(btnHome))
                     .addComponent(comboStudent, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboClass, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtGrade, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(comboClass, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(125, 125, 125))
         );
         layout.setVerticalGroup(
@@ -252,11 +215,7 @@ public class EnrollForm extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTeacher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboStudent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblGrade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtGrade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(88, 88, 88)
+                .addGap(130, 130, 130)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHome))
@@ -264,7 +223,7 @@ public class EnrollForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public boolean addEnrollment(int studentID, int classID, String grade) {
+    public boolean addEnrollment(int studentID, int classID) {
         try {
             statement = connection.createStatement();
             ResultSet enrollSet = statement.executeQuery("SELECT count(*) AS count FROM enroll WHERE classID = " + classID + " AND studentID = " + studentID);
@@ -273,8 +232,8 @@ public class EnrollForm extends javax.swing.JPanel {
 
             if (enrollCount == 0) {
                 statement.execute("SET FOREIGN_KEY_CHECKS = 0");
-                statement.execute("INSERT INTO enroll (studentID, classID, grade) "
-                        + "VALUES (" + studentID + ", " + classID + ", '" + grade + "')");
+                statement.execute("INSERT INTO enroll (studentID, classID) "
+                        + "VALUES (" + studentID + ", " + classID + ")");
                 statement.execute("SET FOREIGN_KEY_CHECKS = 1");
                 JOptionPane.showMessageDialog(this,
                         "Student enrolled successfully added",
@@ -299,8 +258,7 @@ public class EnrollForm extends javax.swing.JPanel {
         String comboStringClass = comboRetrieveClass.toString();
         String[] comboSplitClass = comboStringClass.split("\\)");
         int classID = Integer.parseInt(comboSplitClass[0]);
-        String grade = txtGrade.getText();
-        addEnrollment(studentID, classID, grade);
+        addEnrollment(studentID, classID);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
@@ -316,9 +274,7 @@ public class EnrollForm extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> comboClass;
     private javax.swing.JComboBox<String> comboStudent;
     private javax.swing.JLabel lblClassCode;
-    private javax.swing.JLabel lblGrade;
     private javax.swing.JLabel lblTeacher;
     private javax.swing.JLabel lblTitle;
-    private javax.swing.JFormattedTextField txtGrade;
     // End of variables declaration//GEN-END:variables
 }

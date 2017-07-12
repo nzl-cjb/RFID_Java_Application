@@ -31,7 +31,6 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="lblClassCode" pref="110" max="32767" attributes="0"/>
                   <Component id="lblTeacher" alignment="0" max="32767" attributes="0"/>
-                  <Component id="lblGrade" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -42,7 +41,6 @@
                   </Group>
                   <Component id="comboStudent" alignment="0" max="32767" attributes="0"/>
                   <Component id="comboClass" alignment="0" max="32767" attributes="0"/>
-                  <Component id="txtGrade" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
           </Group>
@@ -63,12 +61,7 @@
                   <Component id="lblTeacher" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="comboStudent" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="lblGrade" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtGrade" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="130" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnSubmit" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnHome" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -163,24 +156,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
-    </Component>
-    <Component class="javax.swing.JLabel" name="lblGrade">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Grade:"/>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[90, 20]"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JFormattedTextField" name="txtGrade">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-        </Property>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[4, 20]"/>
-        </Property>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>
